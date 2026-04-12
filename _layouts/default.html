@@ -3,92 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
     <meta name="description" content="{{ page.description | default: site.description }}">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
-        }
-        
-        header {
-            background: #2c3e50;
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-        
-        nav {
-            background: #34495e;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 1.5rem;
-            font-weight: 500;
-        }
-        
-        nav a:hover {
-            opacity: 0.8;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-        
-        footer p {
-            opacity: 0.9;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/style.css">
+    <link rel="icon" type="image/svg+xml" href="{{ site.baseurl }}/favicon.svg">
+    <link rel="icon" type="image/png" href="{{ site.baseurl }}/favicon.png" sizes="192x192">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1><a href="{{ site.baseurl }}/" style="color: white; text-decoration: none;">{{ site.title }}</a></h1>
-        <p>{{ site.description }}</p>
-    </header>
-    
-    <nav>
-        <a href="{{ site.baseurl }}/">Home</a>
-        <a href="{{ site.baseurl }}/about">About</a>
-    </nav>
-    
-    <div class="container">
-        {{ content }}
+    <div class="page-wrapper">
+        <header class="site-header">
+            <nav class="site-nav">
+                <div class="nav-brand">
+                    <a href="{{ site.baseurl }}/">
+                        <span class="brand-icon">▲</span>
+                        <span class="brand-text">{{ site.title }}</span>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="{{ site.baseurl }}/" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                </div>
+            </nav>
+        </header>
+
+        <main class="site-content">
+            {{ content }}
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>&copy; {{ site.time | date: "%Y" }} {{ site.author }}. All rights reserved.</p>
+                <p class="footer-desc">{{ site.description }}</p>
+            </div>
+        </footer>
     </div>
-    
-    <footer>
-        <p>&copy; 2026 {{ site.author }}. All rights reserved.</p>
-    </footer>
 </body>
 </html>

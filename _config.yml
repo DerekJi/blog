@@ -1,4 +1,4 @@
-title: DerekJi.github.io Development Blog
+title: DerekJi Development Blog
 description: A blog about software development, AI, and other tech topics.
 author: Zhigang Ji
 baseurl: /blog
@@ -6,21 +6,15 @@ url: https://derekji.github.io
 
 # Build settings
 markdown: kramdown
-theme: minima
+permalink: /:year/:month/:day/:slug.html
 
-# Collections
-collections:
-  posts:
-    output: true
-    permalink: /:year/:month/:day/:slug.html
-
-# Defaults
+# Defaults - apply post layout to all posts
 defaults:
   - scope:
-      path: "published"
+      path: "_posts"
       type: "posts"
     values:
-      layout: post
+      layout: "post"
 
 # Plugins
 plugins:
@@ -34,4 +28,5 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
-  - .gitignore
+  - DEPLOYMENT_GUIDE.md
+  - verify-local.sh
