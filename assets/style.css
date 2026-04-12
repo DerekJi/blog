@@ -493,6 +493,52 @@ body {
     border-top: 2px solid var(--border);
 }
 
+.discussion-section {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--bg-secondary);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--border-radius);
+}
+
+.discussion-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-md) 0;
+    color: var(--primary);
+}
+
+.discussion-item {
+    margin-bottom: var(--spacing-md);
+}
+
+.discussion-item strong {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text);
+}
+
+.discussion-item ul {
+    margin: 0;
+    padding-left: var(--spacing-lg);
+}
+
+.discussion-item li {
+    margin-bottom: var(--spacing-xs);
+}
+
+.discussion-item a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.discussion-item a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
 .back-link {
     color: var(--accent);
     text-decoration: none;

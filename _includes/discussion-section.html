@@ -1,0 +1,24 @@
+{% if page.medium_url or page.linkedin_url %}
+<section class="discussion-section">
+  <hr>
+  <h2>Discussion & Sharing</h2>
+  
+  {% if page.medium_url %}
+  <div class="discussion-item">
+    <strong>This article was originally published on:</strong>
+    <ul>
+      <li><a href="{{ page.medium_url }}" target="_blank" rel="noopener noreferrer">Medium (Full Version with Paywall)</a> — Note: Medium membership may be required to view the full article</li>
+    </ul>
+  </div>
+  {% endif %}
+  
+  {% if page.linkedin_url %}
+  <div class="discussion-item">
+    <strong>Join the conversation:</strong>
+    <ul>
+      <li><a href="{{ page.linkedin_url }}" target="_blank" rel="noopener noreferrer">Discuss on LinkedIn</a> — I'd love to hear your thoughts, experiences, and feedback.</li>
+    </ul>
+  </div>
+  {% endif %}
+</section>
+{% endif %}

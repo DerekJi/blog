@@ -5,9 +5,9 @@ date: 2026-04-12
 tags: [AI, Architecture, MCP, CLI, Enterprise-Grade, Design, Microservices]
 description: Exploring how CLI-based approaches are replacing MCP for large-scale AI Agent systems, with deep analysis of token efficiency, execution density, and enterprise architecture patterns.
 slug: mcp-vs-cli-paradigm-shift-en
+medium_url: https://medium.com/@derek-ji/from-mcp-to-cli-a-paradigm-shift-in-enterprise-grade-ai-agent-architecture-3d647f6e0c79
+linkedin_url: https://www.linkedin.com/feed/update/urn:li:activity:7449234354163175424/
 ---
-
-# From MCP to CLI: A Paradigm Shift in Enterprise-Grade AI Agent Architecture
 
 When designing AI Agent systems, one overlooked detail is silently reshaping the entire industry's technical foundation.
 
