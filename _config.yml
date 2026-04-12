@@ -1,0 +1,37 @@
+title: Piechowski.io Development Blog
+description: A blog about software development, git, ruby, and more
+author: Derek Piechowski
+baseurl: /blog
+url: https://derekji.github.io
+
+# Build settings
+markdown: kramdown
+theme: minima
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:slug.html
+
+# Defaults
+defaults:
+  - scope:
+      path: "published"
+      type: "posts"
+    values:
+      layout: post
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude files
+exclude:
+  - drafts/
+  - _init/
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - .gitignore

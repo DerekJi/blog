@@ -1,0 +1,44 @@
+---
+layout: default
+---
+
+<article>
+    <h2>{{ page.title }}</h2>
+    
+    <div style="color: #666; font-size: 0.95rem; margin-bottom: 1.5rem;">
+        <span>📅 {{ page.date | date: "%b %d, %Y" }}</span>
+        {% if page.tags %}
+            <div style="margin-top: 0.5rem;">
+                {% for tag in page.tags %}
+                    <span style="display: inline-block; background: #e8e8e8; padding: 0.2rem 0.8rem; margin-right: 0.5rem; border-radius: 3px; font-size: 0.9rem;">
+                        {{ tag }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if page.image %}
+        <div style="margin-bottom: 1.5rem;">
+            <img src="{{ page.image }}" alt="{{ page.title }}" style="max-width: 100%; height: auto; border-radius: 5px;">
+        </div>
+    {% endif %}
+    
+    {% if page.description %}
+        <p style="font-size: 1.1rem; font-style: italic; color: #555; margin-bottom: 1.5rem;">
+            {{ page.description }}
+        </p>
+    {% endif %}
+    
+    <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
+    
+    <div style="line-height: 1.8; font-size: 1.05rem;">
+        {{ content }}
+    </div>
+    
+    <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ddd;">
+    
+    <div style="text-align: center; color: #666; font-size: 0.95rem;">
+        <p>← <a href="{{ site.baseurl }}/">Back to Home</a></p>
+    </div>
+</article>

@@ -1,21 +1,29 @@
-*.docx
-
 # Jekyll
 _site/
 .jekyll-cache/
 .jekyll-metadata
 Gemfile.lock
 
+# Ruby
+*.gem
+.bundle/
+vendor/
+
 # OS
 .DS_Store
 Thumbs.db
+*.log
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# Drafts
+# Project specific
 drafts/
 _init/
+*.docx
+.env
+.env.local
