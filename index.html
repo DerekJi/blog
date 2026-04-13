@@ -4,9 +4,13 @@ title: Home
 ---
 
 <section class="hero">
-    <h1>{{ site.title }}</h1>
-    <p class="hero-desc">{{ site.description }}</p>
+    <div class="hero-content">
+        <h1>{{ site.title }}</h1>
+        <p class="hero-desc">{{ site.description }}</p>
+    </div>
 </section>
+
+{% include author-bio.html %}
 
 <section class="articles">
     <h2 class="articles-title">Latest Articles</h2>
@@ -22,7 +26,10 @@ title: Home
                             <h3 class="article-title">
                                 <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
                             </h3>
-                            <time class="article-date">{{ post.date | date: "%b %d, %Y" }}</time>
+                            <div class="article-meta">
+                                <time class="article-date">{{ post.date | date: "%b %d, %Y" }}</time>
+                                <span class="reading-time">{{ post.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+                            </div>
                         </div>
                         
                         {% if post.tags %}
