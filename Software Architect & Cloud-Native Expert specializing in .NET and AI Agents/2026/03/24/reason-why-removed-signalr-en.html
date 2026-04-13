@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why We Removed SignalR — Elegant Architecture Doesn't Always Mean the Right Fit · Zhigang Ji</title>
+    <meta name="description" content="Why SignalR was removed from a real-world insurance quoting platform, and how a simpler polling-based architecture proved to be a better fit.">
+    <link rel="stylesheet" href="/blog/assets/style.css">
+    <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg">
+    <link rel="icon" type="image/png" href="/blog/favicon.png" sizes="192x192">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <a id="page-top" style="display: none;"></a>
+    <div class="page-wrapper">
+        <header class="site-header">
+            <nav class="site-nav">
+                <div class="nav-brand">
+                    <button class="brand-button" onclick="window.location='/blog/';" title="Home">
+                        <span class="brand-text">ZJ</span>
+                    </button>
+                </div>
+                <div class="nav-links">
+                    <a href="https://derek-ji.medium.com/" class="nav-link" target="_blank" title="Medium" rel="noopener" style="padding:0 2px;">
+                        <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:middle;">
+                            <rect width="40" height="40" rx="8" fill="#12100E"/>
+                            <path d="M11.5 20c0 4.142 2.91 7.5 6.5 7.5s6.5-3.358 6.5-7.5-2.91-7.5-6.5-7.5-6.5 3.358-6.5 7.5z" fill="#fff"/>
+                            <ellipse cx="28.5" cy="20" rx="3.5" ry="7.5" fill="#fff"/>
+                            <ellipse cx="34" cy="20" rx="2" ry="7.5" fill="#fff"/>
+                        </svg>
+                    </a>
+                    <a href="https://github.com/DerekJi" class="nav-link" target="_blank" title="GitHub" rel="noopener" style="padding:0 2px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="/blog/feed.xml" class="nav-link" title="RSS Feed" style="padding:0 2px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm3 9c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1zm0-4c2.761 0 5 2.239 5 5h2c0-3.866-3.134-7-7-7v2zm0-2c4.97 0 9 4.03 9 9h2c0-6.075-4.925-11-11-11v2z"/>
+                        </svg>
+                    </a>
+                    <button id="dark-mode-toggle" class="nav-link" title="Toggle dark mode" style="padding:0 2px; background:none; border:none; cursor:pointer;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path id="sun-icon" d="M12 17.5a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zm0 2c-4.142 0-7.5-3.358-7.5-7.5S7.858 4.5 12 4.5s7.5 3.358 7.5 7.5-3.358 7.5-7.5 7.5zm0-15c.276 0 .5-.224.5-.5V1.5a.5.5 0 0 0-1 0V3c0 .276.224.5.5.5zm0 15c.276 0 .5.224.5.5v1.5a.5.5 0 0 1-1 0v-1.5c0-.276.224-.5.5-.5zm7.5-10c.276 0 .5-.224.5-.5a.5.5 0 0 0-1 0v1.5c0 .276.224.5.5.5zm0 0h1.5a.5.5 0 0 0 0-1h-1.5a.5.5 0 0 0 0 1zM4.5 12a.5.5 0 0 0-.5-.5H2.5a.5.5 0 0 0 0 1h1.5c.276 0 .5-.224.5-.5zm0 0a.5.5 0 0 1-.5.5H1.5a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5z"/>
+                            <path id="moon-icon" style="display:none;" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="site-content">
+            <article class="post" itemscope itemtype="https://schema.org/BlogPosting">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="headline">Why We Removed SignalR — Elegant Architecture Doesn't Always Mean the Right Fit</h1>
+        
+        <div class="post-meta">
+            <time datetime="2026-03-24T00:00:00+10:30" itemprop="datePublished" class="post-date">
+                Mar 24, 2026
+            </time>
+            
+        </div>
+
+        
+            <div class="post-tags">
+                
+                    <span class="tag">SignalR</span>
+                
+                    <span class="tag">Architecture</span>
+                
+                    <span class="tag">Real-time</span>
+                
+                    <span class="tag">Microservices</span>
+                
+                    <span class="tag">Polling</span>
+                
+                    <span class="tag">.NET</span>
+                
+                    <span class="tag">BFF</span>
+                
+            </div>
+        
+    </header>
+
+    
+
+    
+        <p class="post-excerpt" itemprop="description">Why SignalR was removed from a real-world insurance quoting platform, and how a simpler polling-based architecture proved to be a better fit.</p>
+    
+
+    <div class="post-content" itemprop="articleBody">
+        <h2 id="1-what-were-building">1. What We’re Building</h2>
+
+<p>Our system is an online insurance quoting platform. A user opens a web page, answers a series of questions — vehicle details, driving history, personal information — and the system calculates a premium in the background, presenting a final price for the user to accept or decline.</p>
+
+<p>The flow spans more than a dozen steps. At each step forward, the backend sends the newly collected data to a downstream underwriting engine, retrieves the latest quote result, and displays it to the user.</p>
+
+<p><strong>The core interaction model is simple: user fills in → backend calculates → frontend shows result → user continues.</strong></p>
+
+<hr />
+
+<h2 id="2-how-signalr-got-in">2. How SignalR Got In</h2>
+
+<p>At project kick-off, the team faced a design question: the underwriting engine’s calculation is asynchronous — it can’t return a result immediately. How do you push the result back to the frontend?</p>
+
+<p>At the time, the underwriting engine and our application were part of the same deployment unit, and the team had full control over it. The technology choice was <strong>SignalR</strong> — Microsoft’s standard solution for real-time bidirectional communication in the .NET ecosystem, built on WebSockets with fallback support for Server-Sent Events and Long Polling.</p>
+
+<p>On the architecture diagram, the solution looked elegant:</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Browser
+    participant BFF
+    participant Underwriting Engine
+
+    Browser-&gt;&gt;BFF: Submit form data
+    BFF-&gt;&gt;Underwriting Engine: Initiate calculation
+    BFF--&gt;&gt;Browser: 202 Accepted (return immediately)
+    Underwriting Engine--&gt;&gt;BFF: Calculation complete
+    BFF-&gt;&gt;Browser: Push result via WebSocket Hub ✅
+</code></pre>
+
+<p>The user doesn’t have to wait — the backend pushes at the exact moment the calculation finishes, with minimal latency.</p>
+
+<p>Was this the right choice? <strong>In certain scenarios, absolutely.</strong></p>
+
+<p>Over time, however, the underwriting engine was split out into an independent microservice, maintained by a separate team. <strong>Our application became a pure consumer — able only to call the interfaces it exposed, with no ability to modify its behaviour.</strong> What had once been an “internal implementation detail” was now a coupling point spanning a service boundary. By the time we started re-examining this design, the architectural reality had changed completely from when the original decision was made.</p>
+
+<hr />
+
+<h2 id="3-what-signalr-is-actually-good-for">3. What SignalR Is Actually Good For</h2>
+
+<p>Before diving into our problems, let’s establish a baseline: SignalR is a solid technology. It solves a real class of problems.</p>
+
+<p>The scenarios where SignalR genuinely shines share these characteristics:</p>
+
+<pre><code class="language-mermaid">graph LR
+    A[Server-initiated events] --&gt; B[Unpredictable timing]
+    B --&gt; C[Multiple clients need to receive simultaneously]
+    C --&gt; D[Clients cannot or should not poll]
+</code></pre>
+
+<p>Canonical examples:</p>
+<ul>
+  <li><strong>Collaborative documents</strong> (like Google Docs): any user’s edit must be synchronised in real time to everyone else with the document open</li>
+  <li><strong>Stock price dashboards</strong>: prices change every second; push is far more efficient than polling</li>
+  <li><strong>Chat rooms</strong>: message arrival is completely unpredictable; frequent polling wastes resources</li>
+  <li><strong>High-concurrency notification systems</strong>: tens of thousands of connections simultaneously waiting for server-side pushes</li>
+</ul>
+
+<p>What these scenarios have in common: <strong>the server needs to broadcast to multiple connections, or the timing of events is truly unpredictable — the wait could be seconds or hours.</strong></p>
+
+<hr />
+
+<h2 id="4-looking-back-at-our-actual-situation">4. Looking Back at Our Actual Situation</h2>
+
+<p>Now apply that standard to our scenario.</p>
+
+<p><strong>How slow is our underwriting calculation?</strong></p>
+
+<p>From monitoring data: the vast majority of calculations complete in <strong>1–2 seconds</strong>, with the slowest cases under 5 seconds. This isn’t “unpredictable, potentially long-duration waiting” — it’s a known, bounded window.</p>
+
+<p><strong>How many concurrent users are waiting?</strong></p>
+
+<p>Our platform sees tens of thousands to low hundreds of thousands of visits per day — a normal scale for a consumer insurance business. Even at peak, the number of users concurrently waiting for a quote calculation is quite limited. Insurance quoting is a <strong>deliberate, step-by-step process</strong>, not a flash sale.</p>
+
+<p><strong>Does the result need to be broadcast to multiple clients?</strong></p>
+
+<p>Not at all. Each calculation result belongs only to the one user who initiated that request. There is zero broadcast requirement.</p>
+
+<p>A direct comparison:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Characteristic</th>
+      <th>Where SignalR fits</th>
+      <th>Our actual situation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Wait duration</td>
+      <td>Unpredictable (seconds to hours)</td>
+      <td>Known (1–5 seconds)</td>
+    </tr>
+    <tr>
+      <td>Number of receivers</td>
+      <td>Broadcast to multiple clients</td>
+      <td>Only the requesting user</td>
+    </tr>
+    <tr>
+      <td>Concurrent connection scale</td>
+      <td>Tens of thousands of persistent connections</td>
+      <td>Small number of brief waits</td>
+    </tr>
+    <tr>
+      <td>Who triggers the event</td>
+      <td>Server-initiated</td>
+      <td>In response to user action</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Conclusion:</strong> Our scenario simply does not need SignalR. We brought a sledgehammer to drive a thumbtack.</p>
+
+<hr />
+
+<h2 id="5-the-real-cost-of-maintaining-signalr">5. The Real Cost of Maintaining SignalR</h2>
+
+<p>An ill-fitting architecture is a design problem, but at the engineering level it gradually becomes a <strong>maintenance burden</strong>.</p>
+
+<p><strong>Frontend complexity</strong></p>
+
+<p>To integrate with the SignalR Hub, the frontend had to maintain an entire infrastructure:</p>
+
+<pre><code class="language-mermaid">graph TD
+    A[SignalR Module] --&gt; B[Connection management&lt;br/&gt;establish / disconnect / reconnect]
+    A --&gt; C[HTTP Interceptor&lt;br/&gt;intercept requests, suspend until Hub callback]
+    A --&gt; D[Response Handler Service&lt;br/&gt;process messages pushed from Hub]
+    A --&gt; E[Awaitable Command model&lt;br/&gt;convert SignalR callbacks to Promises]
+    A --&gt; F[Test helper components&lt;br/&gt;Mock Hub / Mock Handler]
+</code></pre>
+
+<p>More than 10 files, each requiring development, testing, and maintenance. Every framework upgrade needed verification that this mechanism still worked. Every new engineer needed an explanation of “why does sending an HTTP request require waiting for a WebSocket callback before execution continues?”</p>
+
+<p><strong>Backend dependencies</strong></p>
+
+<p>The backend needed:</p>
+<ul>
+  <li>A dedicated Azure SignalR Service (a managed service with its own cost)</li>
+  <li>Hub class and connection management logic</li>
+  <li>A full set of configuration options and validators</li>
+</ul>
+
+<p><strong>Test friction</strong></p>
+
+<p>Unit tests required mocking Hub behaviour; integration tests had to ensure WebSocket connections were stable in the test environment. These extra test infrastructure pieces created friction on every iteration.</p>
+
+<hr />
+
+<h2 id="6-the-alternatives-we-evaluated">6. The Alternatives We Evaluated</h2>
+
+<p>Before deciding to remove SignalR, we assessed several alternatives — worth going through one by one to explain <strong>why we didn’t choose them</strong>.</p>
+
+<h3 id="option-a-bff-internal-synchronous-wait-making-http-look-synchronous">Option A: BFF-internal synchronous wait (making HTTP “look synchronous”)</h3>
+
+<p>The BFF receives the frontend request, polls the downstream calculation service internally, and only returns to the frontend once it has the result. From the frontend’s perspective, there is a single request/response.</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Frontend
+    participant BFF
+    participant Underwriting Engine
+
+    Frontend-&gt;&gt;BFF: POST calculation request
+    BFF-&gt;&gt;Underwriting Engine: Initiate calculation
+    Underwriting Engine--&gt;&gt;BFF: 202 Accepted
+    loop BFF internal polling
+        BFF-&gt;&gt;Underwriting Engine: GET status
+        Underwriting Engine--&gt;&gt;BFF: Not ready
+    end
+    Underwriting Engine--&gt;&gt;BFF: Calculation complete
+    BFF--&gt;&gt;Frontend: 200 + result
+</code></pre>
+
+<p><strong>Why we didn’t choose it:</strong></p>
+<ul>
+  <li>BFF HTTP connections have timeout limits (typically 30–60 seconds); if a calculation occasionally exceeds this, the frontend receives a 504 rather than a normal result</li>
+  <li>BFF threads are blocked during the wait, increasing thread pool pressure under load</li>
+  <li>Most importantly: the underwriting engine was by now an independent microservice — <strong>it only exposed a GET query interface, with no way for us to make it support “synchronous wait” semantics</strong> — we simply couldn’t change how it responded</li>
+</ul>
+
+<h3 id="option-b-server-sent-events-sse">Option B: Server-Sent Events (SSE)</h3>
+
+<p>SSE is HTTP’s one-way “streaming” mechanism: the server can continuously push data to the frontend, which receives via the <code class="language-plaintext highlighter-rouge">EventSource</code> API. Lighter than SignalR, no WebSocket required.</p>
+
+<p>Why we didn’t choose it:</p>
+<ul>
+  <li>Still requires a persistent connection; maintenance cost compared to SignalR is reduced but not eliminated</li>
+  <li>Given that our known wait time is only 1–5 seconds, the overhead of keeping a connection open is not worth it</li>
+  <li>Interaction with the downstream service still boils down to HTTP + polling; the only benefit of SSE would be in the frontend layer</li>
+</ul>
+
+<h3 id="option-c-polling-what-we-ultimately-chose">Option C: Polling (what we ultimately chose)</h3>
+
+<p>The frontend issues an operation request. The BFF internally sends status queries to the downstream service until it confirms completion, then returns the final result to the frontend.</p>
+
+<p>This is precisely the pattern that SignalR was originally designed to “replace.” In our scenario, <strong>it turned out to be the most appropriate choice.</strong></p>
+
+<hr />
+
+<h2 id="7-our-final-solution-bff-internal-polling">7. Our Final Solution: BFF-Internal Polling</h2>
+
+<p>The architectural change looks like this:</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Frontend
+    participant BFF
+    participant Downstream Service
+
+    Note over Frontend,Downstream Service: Original approach (SignalR)
+    Frontend-&gt;&gt;BFF: POST/PATCH operation request
+    BFF-&gt;&gt;Downstream Service: Issue operation
+    BFF--&gt;&gt;Frontend: 202 (return immediately)
+    Downstream Service--&gt;&gt;BFF: Operation complete notification (WebSocket)
+    BFF-&gt;&gt;Frontend: Push result via SignalR Hub
+
+    Note over Frontend,Downstream Service: New approach (BFF-internal polling)
+    Frontend-&gt;&gt;BFF: POST/PATCH operation request
+    BFF-&gt;&gt;Downstream Service: Issue operation
+    Downstream Service--&gt;&gt;BFF: 202 (accepted)
+    loop BFF internal polling
+        BFF-&gt;&gt;Downstream Service: GET query result
+        Downstream Service--&gt;&gt;BFF: Result ready
+    end
+    BFF--&gt;&gt;Frontend: 200 + final result
+</code></pre>
+
+<p>From the user’s perspective, the experience is identical: click “Continue,” a spinner appears, and 1–2 seconds later the next step loads.</p>
+
+<p><strong>Polling strategy design</strong></p>
+
+<p>Polling is not an infinite loop. We use a <strong>linear incremental backoff</strong> strategy:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Poll 1: wait 1 second
+Poll 2: wait 2 seconds
+Poll 3: wait 3 seconds
+...
+Poll 7: wait 7 seconds
+Maximum total wait: 28 seconds (1+2+3+4+5+6+7)
+</code></pre></div></div>
+
+<p><strong>Why does the second poll usually give us the result?</strong></p>
+
+<p>This is the most critical engineering detail in the article: the downstream service caches GET responses, and every data mutation invalidates and immediately updates the cache. From the time a mutation request (POST/PATCH) is sent to when the cache is updated typically takes less than 1 second. So:</p>
+
+<ul>
+  <li>Poll 1 (after a 1-second delay): hits the already-updated cache — almost always returns the result</li>
+  <li>Only in rare cases (when the downstream service is under higher load) are polls 2 or 3 needed</li>
+</ul>
+
+<p>In practice, 99% of cases complete within the first two polls, and the wait time perceived by users is indistinguishable from the original SignalR solution.</p>
+
+<p><strong>Where does polling apply?</strong></p>
+
+<p>Our polling is used for two categories of operation:</p>
+
+<ol>
+  <li><strong>Create/delete operations</strong>: after issuing a POST or DELETE, confirm via GET that the resource has been created or deleted (GET returning 200 confirms creation; returning 404 confirms deletion)</li>
+  <li><strong>Update operations</strong>: after issuing a PATCH, read the field values back via GET and compare against the expected values rather than relying solely on the status code</li>
+</ol>
+
+<hr />
+
+<h2 id="8-pitfalls-of-polling--and-how-we-handled-them">8. Pitfalls of Polling — and How We Handled Them</h2>
+
+<p>Polling looks simple, but there are a few details worth taking seriously in a production environment.</p>
+
+<h3 id="pitfall-1-what-happens-when-we-time-out">Pitfall 1: What happens when we time out?</h3>
+
+<p>28 seconds is already a long maximum wait. If we’ve polled 7 times and still haven’t received the expected result, something is seriously wrong with the downstream service.</p>
+
+<p>Our approach: once the maximum retry count is exceeded, throw an exception, log detailed error information (including the actual state returned by the last GET), and return a 500 to the frontend, directing the user to contact support.</p>
+
+<p>This is far better than leaving the user staring at a spinner indefinitely.</p>
+
+<h3 id="pitfall-2-test-suites-become-unbearably-slow">Pitfall 2: Test suites become unbearably slow</h3>
+
+<p>If 28 seconds of total wait time ends up inside a unit test, each test case takes tens of seconds, and the entire test suite becomes unusable.</p>
+
+<p>Our approach: design the polling delay as an <strong>injectable property</strong> (set to 1 millisecond in the test environment). Unit tests complete in milliseconds; production behaviour and test behaviour are perfectly consistent.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Production: DelayMillisecondsPerRetry = 1000 (each wait = N × 1 second)
+Test:       DelayMillisecondsPerRetry = 1     (each wait = N × 1 millisecond)
+</code></pre></div></div>
+
+<p>A small design detail, but one that saves a significant amount of test time in practice.</p>
+
+<h3 id="pitfall-3-bff-threads-blocked-during-polling">Pitfall 3: BFF threads blocked during polling</h3>
+
+<p>The BFF’s internal polling is implemented with <code class="language-plaintext highlighter-rouge">async/await</code>. During the wait, the thread is released back to the thread pool (<code class="language-plaintext highlighter-rouge">Task.Delay</code> is non-blocking), so there is no thread starvation. This is standard usage of the modern .NET async model — no special handling required.</p>
+
+<h3 id="pitfall-4-dont-confuse-polly-retries-with-business-level-polling">Pitfall 4: Don’t confuse Polly retries with business-level polling</h3>
+
+<p>Our HTTP client is configured with both a Polly retry policy (for transient failures such as network errors and 5xx responses) and business-level polling (for waiting on downstream data synchronisation). The two are easy to conflate, and it’s important to keep them clearly separated:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Polly retry</th>
+      <th>Business polling</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Trigger</td>
+      <td>HTTP error (5xx, network exception)</td>
+      <td>Business state not yet ready (data not synced)</td>
+    </tr>
+    <tr>
+      <td>Layer</td>
+      <td>HTTP client layer</td>
+      <td>Business service layer</td>
+    </tr>
+    <tr>
+      <td>Expected outcome</td>
+      <td>Retry yields a normal response</td>
+      <td>Retry yields data matching expected value</td>
+    </tr>
+    <tr>
+      <td>On final failure</td>
+      <td>Wrapped as HTTP exception</td>
+      <td>Wrapped as business exception</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In plain terms: Polly handles “the request failed — retry it”; business polling handles “the request succeeded, but the data hasn’t updated yet — check again.” These are two completely different problems.</p>
+
+<hr />
+
+<h2 id="9-the-result">9. The Result</h2>
+
+<p>A single PR to remove SignalR (<code class="language-plaintext highlighter-rouge">a6e569dd</code>):</p>
+
+<ul>
+  <li><strong>77 files</strong> changed</li>
+  <li>Over <strong>1,200 lines</strong> of code deleted</li>
+  <li>Net reduction of <strong>548 lines</strong></li>
+  <li><strong>253 lines</strong> of new unit tests added in the same PR</li>
+</ul>
+
+<p>From that point on, “the frontend issues an operation and waits for the result” no longer requires a WebSocket connection, a Hub class, an Interceptor, a ResponseHandler, or an AwaitableCommand. It’s a plain HTTP request, plus a polling loop quietly doing its job inside the BFF.</p>
+
+<hr />
+
+<h2 id="10-closing-thoughts-elegant-architecture-doesnt-always-mean-the-right-fit">10. Closing Thoughts: Elegant Architecture Doesn’t Always Mean the Right Fit</h2>
+
+<p>SignalR isn’t wrong. It’s excellent technology with scenarios where it genuinely shines.</p>
+
+<p>The real lesson here is: <strong>when choosing a technical solution, fit matters more than sophistication.</strong> Over-investing at the architecture level often isn’t a sign of poor engineers — it’s a sign that the intuition of “this technology looks correct” has obscured the question of “is this technology actually necessary for us?”</p>
+
+<p>A few questions worth asking yourself at the next technology selection:</p>
+
+<ol>
+  <li>Is our data update truly “unpredictable” — or just “a little slow”?</li>
+  <li>Does this result need to be pushed to “multiple receivers,” or only to the one person who made the request?</li>
+  <li>If we used the simplest possible polling implementation, what’s the worst-case wait time for the user? Is that acceptable?</li>
+  <li>What is the maintenance cost for the team three months after introducing this technology?</li>
+</ol>
+
+<p>Sometimes, one fewer dependency is the best architecture you can have.</p>
+
+    </div>
+
+    
+<section class="discussion-section">
+  <hr>
+  <h2>Discussion & Sharing</h2>
+  
+  
+  <div class="discussion-item">
+    <strong>This article was originally published on:</strong>
+    <ul>
+      <li><a href="https://medium.com/@derek-ji/why-we-removed-signalr-54707910f6c9" target="_blank" rel="noopener noreferrer">Medium (Full Version with Paywall)</a> — Note: Medium membership may be required to view the full article</li>
+    </ul>
+  </div>
+  
+  
+  
+  <div class="discussion-item">
+    <strong>Join the conversation:</strong>
+    <ul>
+      <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7442083768116604929/" target="_blank" rel="noopener noreferrer">Discuss on LinkedIn</a> — I'd love to hear your thoughts, experiences, and feedback.</li>
+    </ul>
+  </div>
+  
+</section>
+
+
+
+    <footer class="post-footer">
+        <a href="/blog/" class="back-link">← Back to all articles</a>
+    </footer>
+</article>
+
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <p>&copy; 2026 Zhigang Ji. All rights reserved.</p>
+                <p class="footer-desc"></p>
+            </div>
+        </footer>
+    </div>
+<div class="lightbox-overlay" id="lightbox">
+    <span class="lightbox-close" id="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="/blog/assets/main.js" defer></script>
+</body>
+</html>
