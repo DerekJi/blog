@@ -14,25 +14,14 @@ title: Home
     {% assign sorted_posts = site.posts | sort: 'date' | reverse %}
     
     {% if sorted_posts.size > 0 %}
-        <div class="articles-grid">
+        <div class="articles-list">
             {% for post in sorted_posts %}
-                <article class="article-card">
-                    {% if post.image %}
-                        <div class="article-thumbnail">
-                            <img src="{{ post.image }}" alt="{{ post.title }}">
-                        </div>
-                    {% else %}
-                        <div class="article-thumbnail no-image">
-                            <span class="placeholder-icon">📝</span>
-                        </div>
-                    {% endif %}
-                    
-                    <div class="article-body">
-                        <h3 class="article-title">
-                            <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-                        </h3>
-                        
-                        <div class="article-meta">
+                <article class="article-row">
+                    <div class="article-content">
+                        <div class="article-header">
+                            <h3 class="article-title">
+                                <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+                            </h3>
                             <time class="article-date">{{ post.date | date: "%b %d, %Y" }}</time>
                         </div>
                         
@@ -45,11 +34,11 @@ title: Home
                         {% endif %}
                         
                         {% if post.description %}
-                            <p class="article-excerpt">{{ post.description }}</p>
+                            <p class="article-description">{{ post.description }}</p>
                         {% endif %}
-                        
-                        <a href="{{ site.baseurl }}{{ post.url }}" class="article-link">Read more →</a>
                     </div>
+                    
+                    <a href="{{ site.baseurl }}{{ post.url }}" class="article-link">Read more →</a>
                 </article>
             {% endfor %}
         </div>
