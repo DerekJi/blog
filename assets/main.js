@@ -4,10 +4,9 @@ const sunIcon = document.getElementById('sun-icon');
 const moonIcon = document.getElementById('moon-icon');
 const html = document.documentElement;
 
-// Check for saved theme preference or default to system preference
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+// Check for saved theme preference or default to dark
 const savedTheme = localStorage.getItem('theme');
-const currentTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+const currentTheme = savedTheme || 'dark';
 
 if (currentTheme === 'dark') {
     html.setAttribute('data-theme', 'dark');
