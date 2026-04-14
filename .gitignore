@@ -22,8 +22,8 @@ Thumbs.db
 *~
 
 # Project specific
-drafts/
-_init/
+# drafts/
+# _init/
 *.docx
 .env
 .env.local
