@@ -21,10 +21,23 @@ Thumbs.db
 *.swo
 *~
 
-# Project specific
-# drafts/
-# _init/
+# Python environment
+.venv/
+
+# Article content (work-in-progress, not published)
+# content/ is tracked in git intentionally — remove these lines to exclude
+# content/**/video/audio/       ← TTS audio output (binary, large)
+# content/**/video/remotion/    ← Claude-generated Remotion project
+
+# Video production: audio output (large binary files)
+content/**/video/audio/
+
+# Video production: Remotion project build artifacts
+content/**/video/remotion/node_modules/
+content/**/video/remotion/out/
+content/**/video/remotion/.cache/
+
+# Misc
 *.docx
 .env
 .env.local
-node_modules/**
