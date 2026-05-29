@@ -8,8 +8,8 @@
 - [x] Brainstorm
 - [x] Outline
 - [x] Chinese draft
-- [ ] English draft
-- [ ] Published
+- [x] English draft
+- [x] Published
 - [ ] Video script
 - [ ] Audio generated
 - [ ] Remotion project

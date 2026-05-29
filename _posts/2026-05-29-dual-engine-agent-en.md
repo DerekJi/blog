@@ -1,3 +1,11 @@
+---
+title: "The Dual-Engine Agent: A Four-Layer Compression Funnel for Faster, Cheaper General-Purpose Agents"
+date: 2026-05-29
+tags: [ai-agent-architecture, graphrag, token-compression, llm-optimization, enterprise-rag]
+description: "A dual-engine architecture combining GraphRAG and four-layer compression to reduce agent loop counts and token costs by up to 85% on general-purpose reasoning tasks."
+lang: en
+---
+
 # The Dual-Engine Agent: A Four-Layer Compression Funnel for Faster, Cheaper General-Purpose Agents
 
 ## Introduction
