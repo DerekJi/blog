@@ -2,14 +2,15 @@
 
 **Slug:** `do-not-overdesign`  
 **Title:** The Hidden Cost of Over-Engineering: Why Platform Shifts Kill Systems, Not Bad Code  
-**Published:** —
+**Published:** 2026-06-01  
+**File:** `_posts/2026-06-01-do-not-overdesign-en.md`
 
 ## Status
 - [x] Brainstorm
 - [x] Outline
 - [x] Chinese draft
-- [ ] English draft
-- [ ] Published
+- [x] English draft
+- [x] Published
 - [ ] Video script
 - [ ] Audio generated
 - [ ] Remotion project
